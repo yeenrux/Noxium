@@ -14,8 +14,12 @@ BOLD="\033[1m"
 
 noxapi="https://www.usenoxium.xyz/api/macversionrblx"
 robloxapi="https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer"
-noxsiliconexeczip="https://www.usenoxium.xyz/builds/silicon.zip"
-noxintelexeczip="https://www.usenoxium.xyz/builds/intel.zip"
+
+# noxsiliconexeczip="https://www.usenoxium.xyz/builds/silicon.zip"
+# noxintelexeczip="https://www.usenoxium.xyz/builds/intel.zip"
+noxapi="https://www.usenoxium.xyz/builds/noxium-api.zip" # api handles both silicon and intel on it's own
+noxui="https://www.usenoxium.xyz/builds/noxium-ui.zip"
+
 noxlauncherzip="https://www.usenoxium.xyz/builds/native-launcher.zip"
 siliconappPath="/Applications/Roblox.app"
 intelappPath="/Applications/RobloxPlayer.app"
@@ -158,12 +162,7 @@ installexecs() {
 
     zip_name="$execdir/noxium.zip"
 
-    arch=$(uname -m)
-    if [ "$arch" = "arm64" ]; then
-        curl -fsSL "$noxsiliconexeczip" -o "$zip_name" >/dev/null 2>&1 || { err "failed to download"; exit 1; }
-    else
-        curl -fsSL "$noxintelexeczip" -o "$zip_name" >/dev/null 2>&1 || { err "failed to download"; exit 1; }
-    fi
+    curl -fsSL "$noxapi" -o "$zip_name" >/dev/null 2>&1 || { err "failed to download"; exit 1; } # api
 
     ok "Completed"
     echo
@@ -248,8 +247,8 @@ signroblox() {
         codesign --force --deep --sign - "/Applications/Noxium.app" 2>/dev/null
     fi
 
-    if [ -f "$execdir/noxium" ]; then
-        codesign --force --deep --sign - "$execdir/noxium" 2>/dev/null
+    if [ -f "$execdir/noxiumapi" ]; then
+        codesign --force --deep --sign - "$execdir/noxiumapi" 2>/dev/null
     fi
 
     # incase the codesigning above doesn't do shit (again, i'm lazy to review my own work)
