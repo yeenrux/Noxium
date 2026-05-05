@@ -14,7 +14,7 @@ if [ -d "/Applications/Noxium.app" ]; then
 fi
 
 if [ -d "$noxdir" ]; then
-    rm -rf "$noxdir"
+    sudo rm -rf "$noxdir"
 fi
 
 echo "uninstalled ok bai"
