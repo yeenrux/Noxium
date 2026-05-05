@@ -4,6 +4,8 @@
 
 siliconappPath="/Applications/Roblox.app"
 intelappPath="/Applications/RobloxPlayer.app"
+noxdir="$HOME/Documents/Noxium"
+execdir="$noxdir/Executable"
 
 # dtc arch
 arch=$(uname -m)
@@ -17,15 +19,19 @@ fi
 # sudo prompt
 sudo -v
 
-# liveleak: robloxplayer dies in accident (ts a excuse to add another comment)
+# roblox dies ok
 killall Roblox 2>/dev/null
 killall RobloxPlayer 2>/dev/null
 
 # codesigning
 echo "recodesigning..."
+# roblox
 sudo codesign --remove-signature "$ROBLOX_APP" 2>/dev/null || true
 sudo codesign --force --deep --sign - "$ROBLOX_APP"
+# noxium
+sudo codesign --remove-signature "$execdir/noxiumapi" 2>/dev/null || true
+sudo codesign --force --deep --sign - "$execdir/noxiumapi"
 
-# bye bai
+# bai bai
 echo "ok open noxium and it should work now"
 echo "made by @falrux"
