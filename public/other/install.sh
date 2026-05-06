@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo -v
+
 printf "%.0s\n" {1..50}
 cd ~/
 
@@ -350,8 +352,6 @@ pintodock() {
         killall Dock 2>/dev/null
     fi
 }
-
-sudo -v
 
 # forcefully closes roblox so people stop complaining about codesigning not working and shit
 sudo killall -9 Roblox 2>/dev/null
