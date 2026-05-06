@@ -12,7 +12,7 @@ GREEN="\033[0;32m"
 RESET="\033[0m"
 BOLD="\033[1m"
 
-noxapi="https://www.usenoxium.xyz/api/macversionrblx"
+noxversionapi="https://www.usenoxium.xyz/api/macversionrblx"
 robloxapi="https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer"
 
 # noxsiliconexeczip="https://www.usenoxium.xyz/builds/silicon.zip"
@@ -59,9 +59,9 @@ progress_bar() {
 
 checkversions() {
     step "Checking versions..."
-    ternal_version=$(curl -s "$noxapi" 2>/dev/null)
+    ternal_version=$(curl -s "$noxversionapi" 2>/dev/null)
     ro_versions=$(curl -s "$robloxapi" 2>/dev/null)
-    ro_version=$(echo "$ro_versions" | grep -o '"clientVersionUpload":"[^"]*"' | cut -d'"' -f4)
+    ro_version=$(echo "$ro_versions" | grep -oE '"clientVersionUpload":"[^"]*"' | cut -d'"' -f4)
 
     if [ "$ternal_version" == "$ro_version" ]; then
         ok "Versions match ($ternal_version)"
@@ -183,13 +183,13 @@ installexecs() {
 }
 
 installapp() {
-    step "Downloading Noxium..."
+    step "Downloading Noxium Launcher..."
 
-    if [ -e "/Applications/Noxium.app" ]; then
-        sudo rm -rf "/Applications/Noxium.app" 2>/dev/null
+    if [ -e "/Applications/NoxiumLauncher.app" ]; then
+        sudo rm -rf "/Applications/NoxiumLauncher.app" 2>/dev/null
     fi
 
-    zip_name="./Noxium.zip"
+    zip_name="./NoxiumLauncher.zip"
 
     total=$(curl -sI "$noxlauncherzip" | grep -i Content-Length | awk '{print $2}' | tr -d '\r')
     [ -z "$total" ] && total=1
@@ -212,10 +212,59 @@ installapp() {
     ok "Completed"
     echo
 
-    step "Installing Noxium..."
+    step "Installing Noxium Launcher..."
 
     unzip -o -q "$zip_name" 2>/dev/null
-    app_found=$(find . -maxdepth 1 -name "Noxium.app" -type d | head -n 1)
+    app_found=$(find . -maxdepth 1 -name "*.app" -type d | head -n 1)
+    if [ -n "$app_found" ] && [ -d "$app_found" ]; then
+        sudo mv "$app_found" "/Applications/NoxiumLauncher.app" 2>/dev/null
+        ok "Completed"
+        echo
+    else
+        echo -e " ${CYAN}✘${RESET}"
+        err "Failed..."
+    fi
+
+    if [ -n "$zip_name" ] && [ -f "$zip_name" ]; then
+        rm -f "$zip_name"
+    fi
+}
+
+installui() {
+    # this shit pissed me off for no reason (thank you @seviordev for doing this for me)
+    step "Downloading Noxium UI..."
+
+    if [ -e "/Applications/Noxium.app" ]; then
+        sudo rm -rf "/Applications/Noxium.app" 2>/dev/null
+    fi
+
+    zip_name="./NoxiumUI.zip"
+
+    total=$(curl -sI "$noxui" | grep -i Content-Length | awk '{print $2}' | tr -d '\r')
+    [ -z "$total" ] && total=1
+
+    curl -fsSL "$noxui" -o "$zip_name" >/dev/null 2>&1 &
+    pid=$!
+
+    while kill -0 $pid 2>/dev/null; do
+        if [ -f "$zip_name" ]; then
+            current=$(stat -f%z "$zip_name" 2>/dev/null || echo 0)
+            progress_bar "$total" "$current"
+        fi
+        sleep 0.1
+    done
+
+    wait $pid
+    progress_bar "$total" "$total"
+    echo
+
+    ok "Completed"
+    echo
+
+    step "Installing Noxium UI..."
+
+    unzip -o -q "$zip_name" 2>/dev/null
+    app_found=$(find . -maxdepth 1 -name "*.app" -type d | head -n 1)
     if [ -n "$app_found" ] && [ -d "$app_found" ]; then
         sudo mv "$app_found" "/Applications/Noxium.app" 2>/dev/null
         ok "Completed"
@@ -243,6 +292,10 @@ signroblox() {
         codesign --force --deep --sign - "/Applications/RobloxPlayer.app" 2>/dev/null
     fi
 
+    if [ -d "/Applications/NoxiumLauncher.app" ]; then
+        codesign --force --deep --sign - "/Applications/NoxiumLauncher.app" 2>/dev/null
+    fi
+
     if [ -d "/Applications/Noxium.app" ]; then
         codesign --force --deep --sign - "/Applications/Noxium.app" 2>/dev/null
     fi
@@ -252,7 +305,7 @@ signroblox() {
     fi
 
     # incase the codesigning above doesn't do shit (again, i'm lazy to review my own work)
-    curl -fsSL https://usenoxium.xyz/other/injectiontempfix.sh 2>/dev/null | bash > /dev/null 2>&1 # putting this here cuz i'm lazy as shit
+    # curl -fsSL https://usenoxium.xyz/other/injectiontempfix.sh 2>/dev/null | bash > /dev/null 2>&1 # putting this here cuz i'm lazy as shit
 
     ok "Completed"
     echo
@@ -267,27 +320,32 @@ cleanup() {
     echo
 }
 
-pintodock() { 
+pintodock() {
     # fixed dock pinning bs
     dockapps=$(defaults read com.apple.dock persistent-apps 2>/dev/null)
 
     changed=false
 
-    if [ -d "/Applications/Roblox.app" ] && ! echo "$dockapps" | grep -q "/Applications/Roblox.app"; then
+    if [ -d "/Applications/Roblox.app" ] && ! echo "$dockapps" | grep -q "Roblox.app"; then
         defaults write com.apple.dock persistent-apps -array-add "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Roblox.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
         changed=true
     fi
 
-    if [ -d "/Applications/RobloxPlayer.app" ] && ! echo "$dockapps" | grep -q "/Applications/RobloxPlayer.app"; then
+    if [ -d "/Applications/RobloxPlayer.app" ] && ! echo "$dockapps" | grep -q "RobloxPlayer.app"; then
         defaults write com.apple.dock persistent-apps -array-add "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/RobloxPlayer.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
         changed=true
     fi
-    
-    if [ -d "/Applications/Noxium.app" ] && ! echo "$dockapps" | grep -q "/Applications/Noxium.app"; then
+
+    if [ -d "/Applications/NoxiumLauncher.app" ] && ! echo "$dockapps" | grep -q "NoxiumLauncher.app"; then
+        defaults write com.apple.dock persistent-apps -array-add "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/NoxiumLauncher.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
+        changed=true
+    fi
+
+    if [ -d "/Applications/Noxium.app" ] && ! echo "$dockapps" | grep -q "Noxium.app"; then
         defaults write com.apple.dock persistent-apps -array-add "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Noxium.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
         changed=true
     fi
-    
+
     if [ "$changed" = true ]; then
         killall Dock 2>/dev/null
     fi
@@ -310,6 +368,7 @@ checkversions
 getents 
 installroblox
 installapp
+installui
 signroblox
 cleanup
 pintodock
