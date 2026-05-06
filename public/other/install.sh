@@ -160,7 +160,7 @@ installexecs() {
         rm -rf "$execdir"/* 2>/dev/null
     fi
 
-    zip_name="$execdir/noxium.zip"
+    zip_name="$execdir/noxium-api.zip"
 
     curl -fsSL "$noxapi" -o "$zip_name" >/dev/null 2>&1 || { err "failed to download"; exit 1; } # api
 
@@ -279,7 +279,7 @@ pintodock() {
     fi
 
     if [ -d "/Applications/RobloxPlayer.app" ] && ! echo "$dockapps" | grep -q "/Applications/RobloxPlayer.app"; then
-        defaults write com.apple.dock persistent-apps -array-add "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Roblox.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
+        defaults write com.apple.dock persistent-apps -array-add "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/RobloxPlayer.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
         changed=true
     fi
     
