@@ -2,13 +2,13 @@
 
 PORT=57319
 
-PIDS=$(sudo lsof -ti :$PORT)
+PID=$(sudo lsof -ti tcp:$PORT -sTCP:LISTEN)
 
-if [ -z "$PIDS" ]; then
+if [ -z "$PID" ]; then
     echo "try using the launcher again"
 else
     echo "found process"
-    echo "$PIDS" | xargs sudo kill -9
+    sudo kill -9 $PID
     echo "process terminated"
     echo "try using the launcher again"
 fi
