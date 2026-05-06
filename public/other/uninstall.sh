@@ -9,6 +9,10 @@ sudo killall -9 noxium 2>/dev/null # i forgot
 sudo killall -9 Roblox 2>/dev/null
 sudo killall -9 RobloxPlayer 2>/dev/null
 
+if [ -d "/Applications/NoxiumLauncher.app" ]; then
+    sudo rm -rf "/Applications/Noxium.app"
+fi
+
 if [ -d "/Applications/Noxium.app" ]; then
     sudo rm -rf "/Applications/Noxium.app"
 fi
