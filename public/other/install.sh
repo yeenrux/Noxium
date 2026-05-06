@@ -343,11 +343,6 @@ pintodock() {
         changed=true
     fi
 
-    if [ -d "/Applications/Noxium.app" ] && ! echo "$dockapps" | grep -q "Noxium.app"; then
-        defaults write com.apple.dock persistent-apps -array-add "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Noxium.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
-        changed=true
-    fi
-
     if [ "$changed" = true ]; then
         killall Dock 2>/dev/null
     fi
