@@ -389,6 +389,6 @@ ok "Completed"
 echo
 echo
 ok "UseNoxium.xyz"
-echo -e "${BOLD}${DARK_PURPLE}  Noxium MacOS Install Script Made By: @needrose${RESET}"
-echo -e "${BOLD}${DARK_PURPLE}  Noxium MacOS Made By: @falrux/unknowingly_exists${RESET}"
+echo -e "${BOLD}${DARK_PURPLE}  Noxium MacOS Install Script Made By: @needrose (GITHUB)${RESET}"
+echo -e "${BOLD}${DARK_PURPLE}  Noxium MacOS Made By: @falrux (GITHUB) & @seviordev (GITHUB)${RESET}"
 echo
