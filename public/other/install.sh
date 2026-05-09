@@ -150,7 +150,21 @@ installroblox() {
 
 setupdirs() {
     step "Creating directories..."
-    mkdir -p "$execdir" "$workdir" "$confdir" 2>/dev/null
+    mkdir -p "$execdir" "$workdir" "$confdir/other" 2>/dev/null
+
+    if [ "$(uname -m)" = "arm64" ]; then
+        platform="silicon"
+    else
+        platform="intel"
+    fi
+
+# this is important because i don't wanna add an annoying ass prompt on startup to noxium
+    cat > "$confdir/other/config.json" << EOF
+{
+  "platformselection": "$platform"
+}
+EOF
+
     ok "Completed"
     echo
 }
