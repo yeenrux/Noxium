@@ -14,7 +14,7 @@ GREEN="\033[0;32m"
 RESET="\033[0m"
 BOLD="\033[1m"
 
-noxversionapi="https://www.usenoxium.xyz/api/macversionrblx"
+noxversionapi="https://www.usenoxium.xyz/api/macstatus.json"
 robloxapi="https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer"
 
 # noxsiliconexeczip="https://www.usenoxium.xyz/builds/silicon.zip"
@@ -61,7 +61,7 @@ progress_bar() {
 
 checkversions() {
     step "Checking versions..."
-    ternal_version=$(curl -s "$noxversionapi" 2>/dev/null)
+    ternal_version=$(curl -s "$noxversionapi" 2>/dev/null | grep -oE '"rbxversion":[[:space:]]*"[^"]*"' | cut -d'"' -f4)
     ro_versions=$(curl -s "$robloxapi" 2>/dev/null)
     ro_version=$(echo "$ro_versions" | grep -oE '"clientVersionUpload":"[^"]*"' | cut -d'"' -f4)
 
