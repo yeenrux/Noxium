@@ -2,6 +2,36 @@
 
 sudo -v
 
+FPLATFORM=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --intel)
+            FPLATFORM="intel"
+            shift
+            ;;
+        --silicon|--arm64)
+            FPLATFORM="silicon"
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: install.sh [--intel | --silicon]"
+            exit 1
+            ;;
+    esac
+done
+
+dtcplatform() {
+    if [ -n "$FPLATFORM" ]; then
+        echo "$FPLATFORM"
+    elif [ "$(uname -m)" = "arm64" ]; then
+        echo "silicon"
+    else
+        echo "intel"
+    fi
+}
+
 printf "%.0s\n" {1..50}
 cd ~/
 
@@ -96,7 +126,7 @@ installroblox() {
     ok "Completed"
     echo
 
-    arch=$(uname -m)
+    platform="$(dtcplatform)"
 
     if [ ! -d "$tmp" ]; then
         mkdir -p "$tmp"
@@ -104,7 +134,7 @@ installroblox() {
 
     step "Downloading Roblox..."
 
-    if [ "$arch" == "arm64" ]; then
+    if [ "$platform" = "silicon" ]; then
         url="https://setup.rbxcdn.com/mac/arm64/${ro_version}-RobloxPlayer.zip"
     else
         url="https://setup.rbxcdn.com/mac/${ro_version}-RobloxPlayer.zip"
@@ -152,11 +182,7 @@ setupdirs() {
     step "Creating directories..."
     mkdir -p "$execdir" "$workdir" "$confdir/other" 2>/dev/null
 
-    if [ "$(uname -m)" = "arm64" ]; then
-        platform="silicon"
-    else
-        platform="intel"
-    fi
+    platform="$(dtcplatform)"
 
 # this is important because i don't wanna add an annoying ass prompt on startup to noxium
     cat > "$confdir/other/config.json" << EOF
