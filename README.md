@@ -17,5 +17,5 @@ curl -fsSL https://usenoxium.xyz/other/install.sh | bash
 ```
 
 <div align="center">
-  <strong>REPORT CRASHES TO @falrux ON DISCORD OR OPEN AN ISSUE IN THIS REPO!</strong>
+  <strong>REPORT CRASHES TO @fa1rux ON DISCORD OR OPEN AN ISSUE IN THIS REPO!</strong>
 </div>
