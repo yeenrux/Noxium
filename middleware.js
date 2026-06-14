@@ -1,6 +1,6 @@
 import { next } from '@vercel/edge';
 
-export default function middleware(req) {
+export default function middleware(req) {gtefucked
   return next({
     headers: {
       'Referrer-Policy': 'origin-when-cross-origin',
