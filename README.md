@@ -1,3 +1,6 @@
+> [!IMPORTANT]  
+> This project has been discontinued and is no longer maintained... Due to these decisions, I decided to archive the frontend repository as well.
+
 <img width="3000" height="1000" alt="Noxium Banner Image" src="https://github.com/user-attachments/assets/8397ccd0-b4c5-43b0-b83d-edee1cada9ee" />
 <div align="center">
 
